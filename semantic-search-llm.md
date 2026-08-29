@@ -1,7 +1,7 @@
 [meilisearch](https://www.meilisearch.com/docs/guides/langchain)
 
 
-```
+```py
 # requires: pip install sentence-transformers
 import numpy as np
 from sentence_transformers import SentenceTransformer
