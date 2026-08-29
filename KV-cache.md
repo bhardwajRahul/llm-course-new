@@ -64,4 +64,50 @@
 - ⑤ What specifically you can work on across four directions.
 
 
+[KV, Prefix, Prompt and Semantic Caching in LLMs, clearly explained](https://x.com/_avichawla/status/2093265776266637739)
+
+
+
+```
+import copy
+import torch
+from transformers import AutoModelForCausalLM, AutoTokenizer, StaticCache
+
+model_id = "HuggingFaceTB/SmolLM2-360M-Instruct"
+tokenizer = AutoTokenizer.from_pretrained(model_id)
+model = AutoModelForCausalLM.from_pretrained(
+    model_id, dtype=torch.bfloat16, device_map="auto"
+)
+
+SHARED_PREFIX = """You are a careful assistant. 
+                   Answer in one short sentence."""
+
+prompt_cache = StaticCache(config=model.config, max_cache_len=1024)
+
+prefix_inputs = tokenizer(SHARED_PREFIX, return_tensors="pt")
+prefix_inputs = prefix_inputs.to(model.device)
+
+# Prefill the shared prefix exactly once. No token is sampled here.
+with torch.no_grad():
+    prompt_cache = model(**prefix_inputs, past_key_values=prompt_cache)
+    prompt_cache = prompt_cache.past_key_values
+
+questions = ["What is the capital of France?", "Name one ocean."]
+
+for question in questions:
+    inputs = tokenizer(SHARED_PREFIX + question, return_tensors="pt")
+    inputs = inputs.to(model.device)
+
+    # each request gets its own copy
+    past_key_values = copy.deepcopy(prompt_cache)   
+
+    outputs = model.generate(
+        **inputs, past_key_values=past_key_values, do_sample=False
+    )
+    print(tokenizer.decode(outputs[0], skip_special_tokens=True))
+```
+
+
+
+
 
