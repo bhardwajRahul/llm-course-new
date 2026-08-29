@@ -66,6 +66,15 @@
 
 [KV, Prefix, Prompt and Semantic Caching in LLMs, clearly explained](https://x.com/_avichawla/status/2093265776266637739)
 
+- `get_seq_length()` then reports how many token positions the cache holds. When you run this, the output contains the prompt length plus the tokens generated, minus one.
+  
+
+<img width="505" height="269" alt="Screenshot 2026-08-29 at 2 31 22 PM" src="https://github.com/user-attachments/assets/450c7c6b-cb1c-44cb-ad35-6d77ac85a770" />
+
+*** For a 70B model at BF16, a single 128K context holds around 40 GB of cache, comparable to the entire model at 4-bit weights.
+
+<img width="500" height="276" alt="Screenshot 2026-08-29 at 2 33 43 PM" src="https://github.com/user-attachments/assets/36e06e2f-429e-4501-9c94-ff7f458125f1" />
+
 
 
 ```
